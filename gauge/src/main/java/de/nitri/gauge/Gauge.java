@@ -8,7 +8,6 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RadialGradient;
@@ -16,7 +15,6 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class Gauge extends View {
@@ -25,10 +23,6 @@ public class Gauge extends View {
     private Path needlePath;
     private Paint needleScrewPaint;
 
-    private Matrix matrix;
-    private int framePerSeconds = 100;
-    private long animationDuration = 10000;
-    private long startTime;
     private float canvasCenterX;
     private float canvasCenterY;
     private float canvasWidth;
@@ -69,25 +63,16 @@ public class Gauge extends View {
 
     public Gauge(Context context) {
         super(context);
-        matrix = new Matrix();
-        this.startTime = System.currentTimeMillis();
-        this.postInvalidate();
         init();
     }
 
     public Gauge(Context context, AttributeSet attrs) {
         super(context, attrs);
-        matrix = new Matrix();
-        this.startTime = System.currentTimeMillis();
-        this.postInvalidate();
         init();
     }
 
     public Gauge(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        matrix = new Matrix();
-        this.startTime = System.currentTimeMillis();
-        this.postInvalidate();
         init();
     }
 
@@ -95,10 +80,8 @@ public class Gauge extends View {
 
         centerValue = (minValue + maxValue) / 2;
 
-        // the linear gradient is a bit skewed for realism
         rimPaint = new Paint();
         rimPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-
 
         rimCirclePaint = new Paint();
         rimCirclePaint.setAntiAlias(true);
@@ -118,9 +101,7 @@ public class Gauge extends View {
         scalePaint.setStyle(Paint.Style.STROKE);
 
         scalePaint.setAntiAlias(true);
-        //scalePaint.setLinearText(true);
         scalePaint.setColor(0x9f004d0f);
-
 
         labelPaint = new Paint();
         labelPaint.setTextSize(42f);
@@ -129,30 +110,24 @@ public class Gauge extends View {
         labelPaint.setTextAlign(Paint.Align.CENTER);
 
         needlePaint = new Paint();
-        needlePaint.setColor(Color.RED); // Set the color
-        needlePaint.setStyle(Paint.Style.FILL_AND_STROKE); // set the border and fills the inside of needle
+        needlePaint.setColor(Color.RED);
+        needlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         needlePaint.setAntiAlias(true);
-        needlePaint.setStrokeWidth(5.0f); // width of the border
-        needlePaint.setShadowLayer(8.0f, 0.1f, 0.1f, Color.GRAY); // Shadow of the needle
+        needlePaint.setStrokeWidth(5.0f);
+        needlePaint.setShadowLayer(8.0f, 0.1f, 0.1f, Color.GRAY);
 
         needlePath = new Path();
 
         needleScrewPaint = new Paint();
         needleScrewPaint.setColor(Color.BLACK);
         needleScrewPaint.setAntiAlias(true);
-        // needleScrewPaint.setShader(new RadialGradient(130.0f, 50.0f, 10.0f,
-        //        Color.DKGRAY, Color.BLACK, Shader.TileMode.CLAMP));
 
         needleValue = value = initialValue;
-
-        //setValue(250);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-        long elapsedTime = System.currentTimeMillis() - startTime;
 
         // canvas.drawColor(Color.LTGRAY);
 
@@ -163,19 +138,12 @@ public class Gauge extends View {
         drawScale(canvas);
         drawLabels(canvas);
 
-        //matrix.postRotate(1.0f, canvasCenterX, canvasCenterY); // rotate 10 degree every second
-        //canvas.concat(matrix);
         canvas.rotate(scaleToCanvasDegrees(valueToDegrees(needleValue)), canvasCenterX, canvasCenterY);
 
         canvas.drawPath(needlePath, needlePaint);
 
         canvas.drawCircle(canvasCenterX, canvasCenterY, canvasWidth / 61f, needleScrewPaint);
 
-        //if (elapsedTime < animationDuration) {
-        //    this.postInvalidateDelayed(10000 / framePerSeconds);
-        //}
-
-        //this.postInvalidateOnAnimation();
         invalidate();
 
         if (needsToMove()) {
@@ -203,22 +171,17 @@ public class Gauge extends View {
     }
 
     private void drawRim(Canvas canvas) {
-        // first, draw the metallic body
         canvas.drawOval(rimRect, rimPaint);
-        // now the outer rim circle
         canvas.drawOval(rimRect, rimCirclePaint);
     }
 
     private void drawFace(Canvas canvas) {
         canvas.drawOval(faceRect, facePaint);
-        // draw the inner rim circle
         canvas.drawOval(faceRect, rimCirclePaint);
-        // draw the rim shadow inside the face
         canvas.drawOval(faceRect, rimShadowPaint);
     }
 
     private void drawScale(Canvas canvas) {
-        //canvas.drawOval(scaleRect, scalePaint);
 
         canvas.save(Canvas.MATRIX_SAVE_FLAG);
         for (int i = 0; i < totalNicks; ++i) {
@@ -343,8 +306,7 @@ public class Gauge extends View {
 
     private float nickToValue(int nick) {
         float rawValue = ((nick < totalNicks / 2) ? nick : (nick - totalNicks)) * valuePerNick;
-        float shiftedValue = rawValue + centerValue;
-        return shiftedValue;
+        return rawValue + centerValue;
     }
 
     private float valueToDegrees(float value) {
