@@ -7,7 +7,7 @@ A Gauge View for Android
 
 ```xml
 <de.nitri.gauge.Gauge
-            android:id="@+id/gauge2"
+            android:id="@+id/gauge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
