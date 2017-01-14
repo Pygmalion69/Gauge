@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:gauge="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
@@ -11,8 +13,57 @@
     tools:context="de.nitri.gaugedemo.MainActivity">
 
     <de.nitri.gauge.Gauge
-        android:id="@+id/gauge"
+        android:id="@+id/gauge1"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content"/>
-</RelativeLayout>
+        android:layout_weight="0.75"
+        gauge:labelTextSize="42"
+        gauge:maxValue="1000"
+        gauge:minValue="0"
+        gauge:totalNicks="120"
+        gauge:valuePerNick="10" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25"
+        android:orientation="horizontal">
+
+        <de.nitri.gauge.Gauge
+            android:id="@+id/gauge2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            gauge:initialValue="22"
+            gauge:maxValue="100"
+            gauge:minValue="0"
+            gauge:totalNicks="120"
+            gauge:valuePerNick="1" />
+
+        <de.nitri.gauge.Gauge
+            android:id="@+id/gauge3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            gauge:faceColor="@color/anthracite"
+            gauge:maxValue="240"
+            gauge:minValue="0"
+            gauge:scaleColor="@color/orangeRed"
+            gauge:totalNicks="280"
+            gauge:majorNickInterval="20"
+            gauge:valuePerNick="1" />
+
+        <de.nitri.gauge.Gauge
+            android:id="@+id/gauge4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            gauge:needleColor="@color/green"
+            android:layout_marginTop="10dp" />
+
+    </LinearLayout>
+</LinearLayout>

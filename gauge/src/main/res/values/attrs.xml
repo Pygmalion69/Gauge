@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="Gauge">
+        <attr name="totalNicks" format="integer" />
+        <attr name="valuePerNick" format="float" />
+        <attr name="majorNickInterval" format="integer" />
+        <attr name="minValue" format="float" />
+        <attr name="maxValue" format="float" />
+        <attr name="intScale" format="boolean" />
+        <attr name="initialValue" format="float" />
+        <attr name="labelTextSize" format="float" />
+        <attr name="faceColor" format="integer" />
+        <attr name="scaleColor" format="integer" />
+        <attr name="needleShadow" format="boolean" />
+        <attr name="needleColor" format="integer" />
+    </declare-styleable>
+
+</resources>

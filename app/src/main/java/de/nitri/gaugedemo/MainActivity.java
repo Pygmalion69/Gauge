@@ -1,10 +1,13 @@
 package de.nitri.gaugedemo;
 
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import de.nitri.gauge.Gauge;
+
+import static android.R.attr.value;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,21 +15,50 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Gauge gauge = (Gauge) findViewById(R.id.gauge);
-        gauge.moveToValue(800);
+        final Gauge gauge1 = (Gauge) findViewById(R.id.gauge1);
+        final Gauge gauge2 = (Gauge) findViewById(R.id.gauge2);
+        final Gauge gauge3 = (Gauge) findViewById(R.id.gauge3);
+        final Gauge gauge4 = (Gauge) findViewById(R.id.gauge4);
 
-        Handler handler = new Handler();
+        gauge1.moveToValue(800);
+
+        //Handler handler = new Handler();
+
+        HandlerThread thread = new HandlerThread("GaugeDemoThread");
+        thread.start();
+        Handler handler = new Handler(thread.getLooper());
+
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-               gauge.moveToValue(300);
+                gauge1.moveToValue(300);
             }
         }, 2800);
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                gauge.moveToValue(550);
+                gauge1.moveToValue(550);
             }
         }, 5600);
+
+        HandlerThread gauge3Thread = new HandlerThread("Gauge3DemoThread");
+        gauge3Thread.start();
+        Handler gauge3Handler = new Handler(gauge3Thread.getLooper());
+        gauge3Handler.post(new Runnable() {
+            @Override
+            public void run() {
+                for (float x = 0; x <= 6; x += .1) {
+                    float value = (float) Math.atan(x) * 20;
+                    gauge3.moveToValue(value);
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        gauge4.setValue(333);
     }
 }

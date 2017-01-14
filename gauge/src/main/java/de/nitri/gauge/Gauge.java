@@ -5,6 +5,7 @@ package de.nitri.gauge;
  */
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
@@ -15,6 +16,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 public class Gauge extends View {
@@ -39,27 +41,33 @@ public class Gauge extends View {
     private Paint scalePaint;
     private RectF scaleRect;
 
-    private static final int totalNicks = 120; // on a full circle
-    private static final float degreesPerNick = 360.0f / totalNicks;
-    private static final float valuePerNick = 10;
-    private static final float minValue = 0;
-    private static final float maxValue = 1000;
-    private static final boolean intScale = true;
+    private int totalNicks = 120; // on a full circle
+    private float degreesPerNick = totalNicks / 360;
+    private float valuePerNick = 10;
+    private float minValue = 0;
+    private float maxValue = 1000;
+    private boolean intScale = true;
 
-    private static final float initialValue = 0;
+    private float requestedLabelTextSize = 0;
+
+    private float initialValue = 0;
     private float value = 0;
     private float needleValue = 0;
 
-    float needleStep = 3f * valuePerDegree();
+    private float needleStep;
 
-    private static float centerValue;
+    private float centerValue;
     private float labelRadius;
 
-    private final int majorNickInterval = 10;
+    private int majorNickInterval = 10;
 
     private static final String TAG = Gauge.class.getSimpleName();
     private Paint labelPaint;
     private long lastMoveTime;
+    private boolean needleShadow = true;
+    private int faceColor;
+    private int scaleColor;
+    private int needleColor;
 
     public Gauge(Context context) {
         super(context);
@@ -68,15 +76,37 @@ public class Gauge extends View {
 
     public Gauge(Context context, AttributeSet attrs) {
         super(context, attrs);
+        applyAttrs(context, attrs);
         init();
     }
 
     public Gauge(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        applyAttrs(context, attrs);
         init();
     }
 
+    private void applyAttrs(Context context, AttributeSet attrs) {
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Gauge, 0, 0);
+        totalNicks = a.getInt(R.styleable.Gauge_totalNicks, totalNicks);
+        degreesPerNick = 360.0f / totalNicks;
+        valuePerNick = a.getFloat(R.styleable.Gauge_valuePerNick, valuePerNick);
+        majorNickInterval = a.getInt(R.styleable.Gauge_majorNickInterval, 10);
+        minValue = a.getFloat(R.styleable.Gauge_minValue, minValue);
+        maxValue = a.getFloat(R.styleable.Gauge_maxValue, maxValue);
+        intScale = a.getBoolean(R.styleable.Gauge_intScale, intScale);
+        initialValue = a.getFloat(R.styleable.Gauge_initialValue, initialValue);
+        requestedLabelTextSize = a.getFloat(R.styleable.Gauge_labelTextSize, requestedLabelTextSize);
+        faceColor = a.getColor(R.styleable.Gauge_faceColor, Color.argb(0xff, 0xff, 0xff, 0xff));
+        scaleColor = a.getColor(R.styleable.Gauge_scaleColor, 0x9f004d0f);
+        needleColor = a.getColor(R.styleable.Gauge_needleColor, Color.RED);
+        needleShadow = a.getBoolean(R.styleable.Gauge_needleShadow, needleShadow);
+        a.recycle();
+    }
+
     private void init() {
+
+        needleStep = 3f * valuePerDegree();
 
         centerValue = (minValue + maxValue) / 2;
 
@@ -92,7 +122,7 @@ public class Gauge extends View {
         facePaint = new Paint();
         facePaint.setAntiAlias(true);
         facePaint.setStyle(Paint.Style.FILL);
-        facePaint.setColor(Color.argb(0xff, 0xff, 0xff, 0xff));
+        facePaint.setColor(faceColor);
 
         rimShadowPaint = new Paint();
         rimShadowPaint.setStyle(Paint.Style.FILL);
@@ -101,20 +131,18 @@ public class Gauge extends View {
         scalePaint.setStyle(Paint.Style.STROKE);
 
         scalePaint.setAntiAlias(true);
-        scalePaint.setColor(0x9f004d0f);
+        scalePaint.setColor(scaleColor);
 
         labelPaint = new Paint();
-        labelPaint.setTextSize(42f);
-        labelPaint.setColor(0x9f004d0f);
+        labelPaint.setColor(scaleColor);
         labelPaint.setTypeface(Typeface.SANS_SERIF);
         labelPaint.setTextAlign(Paint.Align.CENTER);
 
         needlePaint = new Paint();
-        needlePaint.setColor(Color.RED);
+        needlePaint.setColor(needleColor);
         needlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         needlePaint.setAntiAlias(true);
-        needlePaint.setStrokeWidth(5.0f);
-        needlePaint.setShadowLayer(8.0f, 0.1f, 0.1f, Color.GRAY);
+
 
         needlePath = new Path();
 
@@ -238,6 +266,12 @@ public class Gauge extends View {
         needleTailLength = canvasWidth / 12f;
         needleWidth = canvasWidth / 98f;
         needleLength = (canvasWidth / 2f) * 0.8f;
+
+        needlePaint.setStrokeWidth(canvasWidth / 197f);
+
+        if (needleShadow)
+            needlePaint.setShadowLayer(canvasWidth / 123f, canvasWidth / 10000f, canvasWidth / 10000f, Color.GRAY);
+
         setNeedle();
 
         rimRect = new RectF(canvasWidth * .05f, canvasHeight * .05f, canvasWidth * 0.95f, canvasHeight * 0.95f);
@@ -266,7 +300,15 @@ public class Gauge extends View {
         scaleRect.set(faceRect.left + scalePosition, faceRect.top + scalePosition,
                 faceRect.right - scalePosition, faceRect.bottom - scalePosition);
 
-        labelRadius = (canvasCenterX - scaleRect.left) * 0.72f;
+        labelRadius = (canvasCenterX - scaleRect.left) * 0.70f;
+
+        if (requestedLabelTextSize > 0) {
+            labelPaint.setTextSize(requestedLabelTextSize);
+        } else {
+            labelPaint.setTextSize(w / 16f);
+        }
+
+        Log.d(TAG, "width = " + w);
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
@@ -278,7 +320,7 @@ public class Gauge extends View {
         needlePath.lineTo(canvasCenterX + needleLength, canvasCenterY);
         needlePath.lineTo(canvasCenterX, canvasCenterY + (needleWidth / 2));
         needlePath.lineTo(canvasCenterX - needleTailLength, canvasCenterY);
-        needlePath.addCircle(canvasCenterX, canvasCenterY, 20.0f, Path.Direction.CW);
+        needlePath.addCircle(canvasCenterX, canvasCenterY, canvasWidth / 49f, Path.Direction.CW);
         needlePath.close();
 
         needleScrewPaint.setShader(new RadialGradient(canvasCenterX, canvasCenterY, needleWidth / 2,
