@@ -21,33 +21,33 @@ A Gauge View for Android
 
 ###XML attributes
 ####totalNicks
-Total number of nicks on a full 360 degree scale
+Total number of nicks on a full 360 degree scale.
 ####valuePerNick
-Float value (interval) per nick
+Float value (interval) per nick.
 ####majorNickInterval
-Integer interval (number of nicks) between enlarged nicks
+Integer interval (number of nicks) between enlarged nicks.
 ####minValue
-Float minimum value
+Float minimum value.
 ####maxValue
-Float maximum value
+Float maximum value.
 ####intScale
-Boolean for an integer scale (defaults to true)
+Boolean for an integer scale (defaults to true).
 ####initialValue
-Float initial value
+Float initial value.
 ####labelTextSize
-Float text size for the number labels (defaults to a calculated value)
+Float text size for the number labels (defaults to a calculated value).
 ####faceColor
-Integer face color
+Integer face color.
 ####scaleColor
-Integer scale color
+Integer scale color.
 ####needleColor
-Integer needle color
+Integer needle color.
 ####needleShadow
-Boolean to apply a shadow effect to the needele (defaults to true)
+Boolean to apply a shadow effect to the needele (defaults to true).
 
 ###Public methods
 ####void setValue(float value)
-Set gauge to value
+Set gauge to value.
 ####void moveToValue(float value)
-Animate gauge to value
+Animate gauge to value.
 
