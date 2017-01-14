@@ -3,7 +3,7 @@ A Gauge View for Android
 
 ![Android Gauge](device-screenshot-2.png "Android Gauge")
 
-####Example
+###Example
 
 ```xml
 <de.nitri.gauge.Gauge
@@ -19,35 +19,35 @@ A Gauge View for Android
             gauge:valuePerNick="1" />
 ```
 
-####XML attributes
-#####totalNicks
+###XML attributes
+####totalNicks
 Total number of nicks on a full 360 degree scale
-#####valuePerNick
+####valuePerNick
 Float value (interval) per nick
-#####majorNickInterval
+####majorNickInterval
 Integer interval (number of nicks) between enlarged nicks
-#####minValue
+####minValue
 Float minimum value
-#####maxValue
+####maxValue
 Float maximum value
-#####intScale
+####intScale
 Boolean for an integer scale (defaults to true)
-#####initialValue
+####initialValue
 Float initial value
-#####labelTextSize
+####labelTextSize
 Float text size for the number labels (defaults to a calculated value)
-#####faceColor
+####faceColor
 Integer face color
-#####scaleColor
+####scaleColor
 Integer scale color
-#####needleColor
+####needleColor
 Integer needle color
-#####needleShadow
+####needleShadow
 Boolean to apply a shadow effect to the needele (defaults to true)
 
-####Public methods
-#####void setValue(float value)
+###Public methods
+####void setValue(float value)
 Set gauge to value
-#####void moveToValue(float value)
+####void moveToValue(float value)
 Animate gauge to value
 
