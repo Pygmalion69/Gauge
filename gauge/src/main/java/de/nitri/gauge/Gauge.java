@@ -15,6 +15,8 @@ import android.graphics.RadialGradient;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.Typeface;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -105,6 +107,8 @@ public class Gauge extends View {
     }
 
     private void init() {
+
+        setSaveEnabled(true);
 
         needleStep = 3f * valuePerDegree();
 
@@ -344,6 +348,27 @@ public class Gauge extends View {
         }
 
         setMeasuredDimension(size + getPaddingLeft() + getPaddingRight(), size + getPaddingTop() + getPaddingBottom());
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putFloat("value", value);
+        bundle.putFloat("needleValue", needleValue);
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            value = bundle.getFloat("value");
+            needleValue = bundle.getFloat("needleValue");
+            super.onRestoreInstanceState(bundle.getParcelable("superState"));
+        } else {
+            super.onRestoreInstanceState(state);
+        }
     }
 
     private float nickToValue(int nick) {
