@@ -18,7 +18,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
 public class Gauge extends View {
@@ -312,7 +311,7 @@ public class Gauge extends View {
             labelPaint.setTextSize(w / 16f);
         }
 
-        Log.d(TAG, "width = " + w);
+        // Log.d(TAG, "width = " + w);
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
