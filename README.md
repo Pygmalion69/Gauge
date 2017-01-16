@@ -3,6 +3,8 @@ A Gauge View for Android
 
 ![Android Gauge](device-screenshot-2.png "Android Gauge")
 
+See my [blog post](http://pygmalion.nitri.de/android-gauge-view-1039.html) for a brief introduction.
+
 ###Example
 
 ```xml
