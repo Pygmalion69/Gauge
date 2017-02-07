@@ -113,6 +113,9 @@ public class Gauge extends View {
 
         centerValue = (minValue + maxValue) / 2;
 
+        // Rim and shadow are based on the Vintage Thermometer:
+        // http://mindtherobot.com/blog/272/android-custom-ui-making-a-vintage-thermometer/
+
         rimPaint = new Paint();
         rimPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
