@@ -53,3 +53,22 @@ Set gauge to value.
 ####void moveToValue(float value)
 Animate gauge to value.
 
+###Gradle
+
+Add the JitPack repository in your root build.gradle at the end of repositories:
+
+```
+repositories {
+    maven {
+        url 'https://www.jitpack.io'
+    }
+}
+```
+
+Add the depency:
+
+```
+dependencies {
+    compile 'com.github.Pygmalion69:Gauge:0.1.2'
+}
+```
