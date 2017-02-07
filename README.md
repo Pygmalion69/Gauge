@@ -1,6 +1,9 @@
 # Gauge
 A Gauge View for Android
 
+[![Release](https://jitpack.io/v/Pygmalion69/Gauge.svg)]
+(https://jitpack.io/#Pygmalion69/Gauge)
+
 ![Android Gauge](device-screenshot-2.png "Android Gauge")
 
 See my [blog post](http://pygmalion.nitri.de/android-gauge-view-1039.html) for a brief introduction.
