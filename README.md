@@ -1,14 +1,11 @@
 # Gauge
 A Gauge View for Android
 
-[![Release](https://jitpack.io/v/Pygmalion69/Gauge.svg)]
-(https://jitpack.io/#Pygmalion69/Gauge)
-
 ![Android Gauge](device-screenshot-2.png "Android Gauge")
 
 See my [blog post](http://pygmalion.nitri.de/android-gauge-view-1039.html) for a brief introduction.
 
-###Example
+### Example
 
 ```xml
 <de.nitri.gauge.Gauge
@@ -24,39 +21,39 @@ See my [blog post](http://pygmalion.nitri.de/android-gauge-view-1039.html) for a
             gauge:valuePerNick="1" />
 ```
 
-###XML attributes
-####totalNicks
+### XML attributes
+#### totalNicks
 Total number of nicks on a full 360 degree scale.
-####valuePerNick
+#### valuePerNick
 Float value (interval) per nick.
-####majorNickInterval
+#### majorNickInterval
 Integer interval (number of nicks) between enlarged nicks.
-####minValue
+#### minValue
 Float minimum value.
-####maxValue
+#### maxValue
 Float maximum value.
-####intScale
+#### intScale
 Boolean for an integer scale (defaults to true).
-####initialValue
+#### initialValue
 Float initial value.
-####labelTextSize
+#### labelTextSize
 Float text size for the number labels (defaults to a calculated value).
-####faceColor
+#### faceColor
 Integer face color.
-####scaleColor
+#### scaleColor
 Integer scale color.
-####needleColor
+#### needleColor
 Integer needle color.
-####needleShadow
-Boolean to apply a shadow effect to the needele (defaults to true).
+#### needleShadow
+Boolean to apply a shadow effect to the needle (defaults to true).
 
-###Public methods
-####void setValue(float value)
+### Public methods
+#### void setValue(float value)
 Set gauge to value.
-####void moveToValue(float value)
+#### void moveToValue(float value)
 Animate gauge to value.
 
-###Gradle
+### Gradle
 
 Add the JitPack repository in your root build.gradle at the end of repositories:
 
