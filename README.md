@@ -71,6 +71,6 @@ Add the depency:
 
 ```
 dependencies {
-    compile 'com.github.Pygmalion69:Gauge:0.1.2'
+    compile 'com.github.Pygmalion69:Gauge:0.1.3'
 }
 ```
