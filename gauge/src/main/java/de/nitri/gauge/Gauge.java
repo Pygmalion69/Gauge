@@ -17,6 +17,8 @@ import android.graphics.Shader;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -69,6 +71,11 @@ public class Gauge extends View {
     private int faceColor;
     private int scaleColor;
     private int needleColor;
+    private Paint textPaint;
+
+    private float requestedTextSize = 0;
+    private String upperText = "";
+    private String lowerText = "";
 
     public Gauge(Context context) {
         super(context);
@@ -102,6 +109,9 @@ public class Gauge extends View {
         scaleColor = a.getColor(R.styleable.Gauge_scaleColor, 0x9f004d0f);
         needleColor = a.getColor(R.styleable.Gauge_needleColor, Color.RED);
         needleShadow = a.getBoolean(R.styleable.Gauge_needleShadow, needleShadow);
+        requestedTextSize = a.getFloat(R.styleable.Gauge_textSize, requestedTextSize);
+        upperText = a.getString(R.styleable.Gauge_upperText) == null ? upperText : fromHtml(a.getString(R.styleable.Gauge_upperText)).toString();
+        lowerText = a.getString(R.styleable.Gauge_lowerText) == null ? lowerText : fromHtml(a.getString(R.styleable.Gauge_lowerText)).toString();
         a.recycle();
     }
 
@@ -144,6 +154,11 @@ public class Gauge extends View {
         labelPaint.setTypeface(Typeface.SANS_SERIF);
         labelPaint.setTextAlign(Paint.Align.CENTER);
 
+        textPaint = new Paint();
+        textPaint.setColor(scaleColor);
+        textPaint.setTypeface(Typeface.SANS_SERIF);
+        textPaint.setTextAlign(Paint.Align.CENTER);
+
         needlePaint = new Paint();
         needlePaint.setColor(needleColor);
         needlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -171,6 +186,8 @@ public class Gauge extends View {
 
         drawScale(canvas);
         drawLabels(canvas);
+
+        drawTexts(canvas);
 
         canvas.rotate(scaleToCanvasDegrees(valueToDegrees(needleValue)), canvasCenterX, canvasCenterY);
 
@@ -258,9 +275,14 @@ public class Gauge extends View {
                 } else {
                     valueLabel = String.valueOf(value);
                 }
-                drawTextCentered(valueLabel, canvasCenterX + deltaX, canvasCenterY - deltaY, canvas);
+                drawTextCentered(valueLabel, canvasCenterX + deltaX, canvasCenterY - deltaY, labelPaint, canvas);
             }
         }
+    }
+
+    private void drawTexts(Canvas canvas) {
+        drawTextCentered(upperText, canvasCenterX, canvasCenterY - (canvasHeight / 6.5f), textPaint, canvas);
+        drawTextCentered(lowerText, canvasCenterX, canvasCenterY + (canvasHeight / 6.5f), textPaint, canvas);
     }
 
     @Override
@@ -312,6 +334,12 @@ public class Gauge extends View {
             labelPaint.setTextSize(requestedLabelTextSize);
         } else {
             labelPaint.setTextSize(w / 16f);
+        }
+
+        if (requestedTextSize > 0) {
+            textPaint.setTextSize(requestedTextSize);
+        } else {
+            textPaint.setTextSize(w / 14f);
         }
 
         // Log.d(TAG, "width = " + w);
@@ -403,9 +431,21 @@ public class Gauge extends View {
         return Math.abs(needleValue - value) > 0;
     }
 
-    private void drawTextCentered(String text, float x, float y, Canvas canvas) {
-        //float xPos = x - (labelPaint.measureText(text)/2f);
-        float yPos = (y - ((labelPaint.descent() + labelPaint.ascent()) / 2f));
-        canvas.drawText(text, x, yPos, labelPaint);
+    private void drawTextCentered(String text, float x, float y, Paint paint, Canvas canvas) {
+        //float xPos = x - (paint.measureText(text)/2f);
+        float yPos = (y - ((paint.descent() + paint.ascent()) / 2f));
+        canvas.drawText(text, x, yPos, paint);
     }
+
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
+    }
+
 }
