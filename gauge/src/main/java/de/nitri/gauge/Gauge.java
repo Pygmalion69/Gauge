@@ -149,7 +149,6 @@ public class Gauge extends View {
         needlePaint.setStyle(Paint.Style.FILL_AND_STROKE);
         needlePaint.setAntiAlias(true);
 
-
         needlePath = new Path();
 
         needleScrewPaint = new Paint();
@@ -295,7 +294,6 @@ public class Gauge extends View {
                 new int[]{0x00000000, 0x00000500, 0x50000500},
                 new float[]{0.96f, 0.96f, 0.99f},
                 Shader.TileMode.MIRROR));
-
 
         scalePaint.setStrokeWidth(0.005f * canvasWidth);
         scalePaint.setTextSize(0.045f * canvasWidth);
