@@ -48,6 +48,12 @@ Integer scale color.
 Integer needle color.
 #### needleShadow
 Boolean to apply a shadow effect to the needle (defaults to true).
+#### upperText
+String to display on upper gauge face (e.g. a quantity).
+#### lowerText
+String to display on lower gauge face (e.g. a unit).
+#### textSize
+Float text size for upper and lower text.
 
 ### Public methods
 #### void setValue(float value)
@@ -71,6 +77,6 @@ Add the depency:
 
 ```
 dependencies {
-    compile 'com.github.Pygmalion69:Gauge:0.1.3'
+    compile 'com.github.Pygmalion69:Gauge:1.0'
 }
 ```

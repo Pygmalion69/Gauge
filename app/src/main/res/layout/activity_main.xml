@@ -23,7 +23,9 @@
         gauge:maxValue="1000"
         gauge:minValue="0"
         gauge:totalNicks="120"
-        gauge:valuePerNick="10" />
+        gauge:valuePerNick="10"
+        gauge:upperText="Qty"
+        gauge:lowerText="@string/per_minute" />
 
     <LinearLayout
         android:layout_width="match_parent"
