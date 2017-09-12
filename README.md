@@ -78,7 +78,7 @@ repositories {
 }
 ```
 
-Add the depency:
+Add the dependency:
 
 ```
 dependencies {
