@@ -60,6 +60,11 @@ Float text size for upper and lower text.
 Set gauge to value.
 #### void moveToValue(float value)
 Animate gauge to value.
+#### void setUpperText(String text)
+Set string to display on upper gauge face.
+#### void setLowerText(String text)
+Set string to display on lower gauge face.
+
 
 ### Gradle
 
