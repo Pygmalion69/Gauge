@@ -435,6 +435,19 @@ public class Gauge extends View {
         canvas.drawText(text, x, yPos, paint);
     }
 
+    public void setUpperText(String text) {
+        upperText = text;
+        invalidate();
+    }
+
+    public void setLowerText(String text) {
+        lowerText = text;
+        invalidate();
+    }
+
+    public void setRequestedTextSize(float size) {
+        requestedTextSize = size;
+    }
     @SuppressWarnings("deprecation")
     public static Spanned fromHtml(String html){
         Spanned result;
