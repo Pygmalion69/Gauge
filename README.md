@@ -64,6 +64,12 @@ Animate gauge to value.
 Set string to display on upper gauge face.
 #### void setLowerText(String text)
 Set string to display on lower gauge face.
+#### void setDeltaTimeInterval(int value)
+Set the delta time between movement steps during needle animation (default: 5 ms).
+#### void setNeedleStepFactor(float value)
+Set the factor that determines the step size during needle animation (default: 3f).
+The actual step size is calulated as follows: step_size = step_factor * scale_value_per_degree.
+
 
 
 ### Gradle

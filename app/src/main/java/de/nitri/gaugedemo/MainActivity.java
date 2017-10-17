@@ -22,8 +22,6 @@ public class MainActivity extends AppCompatActivity {
 
         gauge1.moveToValue(800);
 
-        //Handler handler = new Handler();
-
         HandlerThread thread = new HandlerThread("GaugeDemoThread");
         thread.start();
         Handler handler = new Handler(thread.getLooper());

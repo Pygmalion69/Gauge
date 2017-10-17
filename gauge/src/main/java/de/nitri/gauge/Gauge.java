@@ -64,6 +64,9 @@ public class Gauge extends View {
 
     private int majorNickInterval = 10;
 
+    private int deltaTimeInterval = 5;
+    private float needleStepFactor = 3f;
+
     private static final String TAG = Gauge.class.getSimpleName();
     private Paint labelPaint;
     private long lastMoveTime;
@@ -119,7 +122,7 @@ public class Gauge extends View {
 
         setSaveEnabled(true);
 
-        needleStep = 3f * valuePerDegree();
+        needleStep = needleStepFactor * valuePerDegree();
 
         centerValue = (minValue + maxValue) / 2;
 
@@ -205,7 +208,7 @@ public class Gauge extends View {
         long currentTime = System.currentTimeMillis();
         long deltaTime = currentTime - lastMoveTime;
 
-        if (deltaTime >= 5) {
+        if (deltaTime >= deltaTimeInterval) {
             if (Math.abs(value - needleValue) <= needleStep) {
                 needleValue = value;
             } else {
@@ -448,6 +451,16 @@ public class Gauge extends View {
     public void setRequestedTextSize(float size) {
         requestedTextSize = size;
     }
+
+    public void setDeltaTimeInterval(int interval) {
+        deltaTimeInterval = interval;
+    }
+
+    public void setNeedleStepFactor(float factor) {
+        needleStepFactor = factor;
+    }
+
+
     @SuppressWarnings("deprecation")
     public static Spanned fromHtml(String html){
         Spanned result;
