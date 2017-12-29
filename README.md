@@ -30,6 +30,10 @@ Total number of nicks on a full 360 degree scale.
 Float value (interval) per nick.
 #### majorNickInterval
 Integer interval (number of nicks) between enlarged nicks.
+
+*Note that there is always a major nick on top, that is at 0 degrees, so
+it is advisable that the sum of the min and max value be divisible by 2.*
+
 #### minValue
 Float minimum value.
 #### maxValue
