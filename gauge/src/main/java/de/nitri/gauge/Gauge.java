@@ -180,8 +180,6 @@ public class Gauge extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        // canvas.drawColor(Color.LTGRAY);
-
         drawRim(canvas);
 
         drawFace(canvas);
@@ -370,10 +368,10 @@ public class Gauge extends View {
         int width = getMeasuredWidth();
         int height = getMeasuredHeight();
         int widthWithoutPadding = width - getPaddingLeft() - getPaddingRight();
-        int heigthWithoutPadding = height - getPaddingTop() - getPaddingBottom();
+        int heightWithoutPadding = height - getPaddingTop() - getPaddingBottom();
 
-        if (widthWithoutPadding > heigthWithoutPadding) {
-            size = heigthWithoutPadding;
+        if (widthWithoutPadding > heightWithoutPadding) {
+            size = heightWithoutPadding;
         } else {
             size = widthWithoutPadding;
         }
