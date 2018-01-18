@@ -1,7 +1,7 @@
 # Gauge
 A Gauge View for Android
 
-[![Release](https://jitpack.io/v/Pygmalion69/Gauge.svg)](https://jitpack.io/#Pygmalion69/Gauge)
+[![Release](https://jitpack.io/v/Pygmalion69/Gauge.svg)](https://jitpack.io/#Pygmalion69/Gauge) [![Build Status](https://travis-ci.org/Pygmalion69/Gauge.svg?branch=master)](https://travis-ci.org/Pygmalion69/Gauge)
 
 ![Android Gauge](device-screenshot-2.png "Android Gauge")
 
