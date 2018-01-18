@@ -12,8 +12,5 @@ android:
 jdk:
   - oraclejdk8
 
-script:
-  - ./gradlew build connectedCheck
-
 before_install:
   - chmod +x gradlew
