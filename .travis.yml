@@ -33,7 +33,7 @@ before_deploy:
 deploy:
   provider: releases
   api_key: "${api_key}"
-  file: build/libs/Gauge.jar
+  file: Gauge.apk
   skip_cleanup: true
   on:
     all_branches: true
