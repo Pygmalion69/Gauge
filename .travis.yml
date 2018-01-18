@@ -1,19 +1,19 @@
 language: android
-
 android:
   components:
-    - tools # to get the new `repository-11.xml`
-    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
-    - platform-tools
-    - build-tools-26.0.2
-    - android-22
-    - android-26
-    - sys-img-armeabi-v7a-android-22
+  - tools
+  - tools
+  - platform-tools
+  - build-tools-26.0.2
+  - android-22
+  - android-26
+  - sys-img-armeabi-v7a-android-22
 
 jdk:
   - oraclejdk8
 
 before_install:
+  - openssl aes-256-cbc -K $encrypted_3c69cb11092a_key -iv $encrypted_3c69cb11092a_iv -in .keystore.enc -out .keystore -d
   - chmod +x gradlew
 
 before_script:
@@ -22,11 +22,24 @@ before_script:
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
 
+before_deploy:
+  - cp $TRAVIS_BUILD_DIR/.keystore $HOME
+  - cd app/build/outputs/apk/
+  - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/.keystore -storepass $storepass -keypass $keypass app-release-unsigned.apk prisoner
+  # Verification
+  - jarsigner -verify app-release-unsigned.apk 
+  - "${ANDROID_HOME}/build-tools/26.0.2/zipalign -v 4 app-release-unsigned.apk Gauge.apk" 
+
 deploy:
   provider: releases
-  api_key: ${api_key}
-  file: "build/libs/Gauge.jar"
+  api_key: "${api_key}"
+  file: build/libs/Gauge.jar
   skip_cleanup: true
   on:
     all_branches: true
     tags: true
+
+env:
+  global:
+  - secure: sh2rfb6EPlh+XYDEUyVqpmH3ZLKTnC9EoILvn62Qmpd8TGpsWf9vEEvRexmU9NKOnUvX5lopUWemeqZUqlJk/Q4/cE7rz5wT5M2UXsraIqKqRt9AsQtqz2gbJfywOv+88482qRydV+HjzV4ux/yWRGEXc8gUvc6l18P1tywiPGijRphd+xjTgi74fC8rajn5zxwX10tlICGanp7zrOkcuLft03LBFSFwrutRnwDYPQQISPxKXClNnPjCao0eEymH98bYTXeddcWathadEqgthYl765MBKt40QYxg6yivRS7DFJ4vCzKpo6FZmOkPgTt4jWHavOw74mTZjmF7M5WQ9E8tj803V98GfSc73l7IJjgWwBeUCAcjb7hG7RvlMRv0y4JhZDR25jtNdLkw5BtXZBhM79vjrQ62L5T2cE+JeB1FJzJpnO5RdrHI2CqDOArCnemDUOhw96wWNOvF+tCpgcjBRpaL9usQTYah27kjWWcH89qQYSDd+hmNzQULevbMoTqjM4C4KvF+G7zvsVODSu+atgYbQvVwk93tw1dzfjZMaxGjxOA/a+2m4OeHuTKKFWvsyHIeSwBwi5PuykpLpdrTwBoW2k7NrAo8nzAwNXCKvsCK/KA7UG9/ctEyV7N92ZQv7BUqs+vk1NxGGDUPyOE3e9eQio5LkbLE2SdPnCQ=
+  - secure: fmo9LylVui88CqAZU9SBywT23/sL+9eWRGEBycFU8Aj1X8pRBA/uZMMrxBBrfECV1+l3RI8mGtiE0mK9CfZV4NutHo7BkhuB7VpSZLzMJlY4VnTJGQtmyuQeHVhJq5THGY5fbesVR6ElxBYGVGbyO/bwvnA/LD/567FiLoR51EJE4V91rLLWJfBPTafrTuSW6q+ZHmyUPmJ1n3lAVcNn8kH/QaOIsDUPGVXLWJdnuZHsc59a0Vspfm2MjU+0o1uyP7gYYFVAXSAB4TOnsvDhbdDYlqVJ5Wlsbda8q9+qfdjZjOlRdxNpvmXDbQw0Ua4EUC5spGx1cyc30FSZgrszyX4hVBXbIuk730z6SRX4SPkkG1JHR6+6uKXkPZYoTH2GilZHvLr2h8LuEk9pQApSI/2NIQF/IUHO0wePQZ6e7oov2U8WIVFTSYtM+oqKJ9QD4OC36IgH22eOoz97QHWAvUus3NvGBzbfOLKqreGcTsIuLTW2tNBCmjeG6FoDzhhGIVHlAE98+Wbkuj4ym/q03hvjVtoLJlclLPud16Exij9DDMz6Fe8dNsbANC0L/d5NbFSLzgmhAa9n0qHkbcOEDZQcxMRgXjJvqad+hkBkkP9lOVWOYftgs9qfD1B71UK0KAyi3qwOR7VGCkqerfPffY4x6JMGvzlyeGW1XEcc+to=
