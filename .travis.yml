@@ -1,5 +1,19 @@
+language: android
+
 android:
   components:
-    - tools
+    - tools # to get the new `repository-11.xml`
+    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
     - platform-tools
-    - tools
+    - build-tools-26.0.2
+    - android-26
+    - sys-img-armeabi-v7a-android-22
+
+jdk:
+  - oraclejdk8
+
+script:
+  - ./gradlew build connectedCheck
+
+before_install:
+  - chmod +x gradlew
