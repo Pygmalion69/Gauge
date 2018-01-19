@@ -1,9 +1,5 @@
 package de.nitri.gauge;
 
-/**
- * Created by helfrich on 07/01/2017.
- */
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -22,6 +18,13 @@ import android.text.Spanned;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * A Gauge View on Android
+ * @author Pygmalion69 (Serge Helfrich)
+ * @version 1.x
+ * @since 2017-01-07
+ * @see @see <a href="https://github.com/Pygmalion69/Gauge">https://github.com/Pygmalion69/Gauge/a>
+ */
 public class Gauge extends View {
 
     private Paint needlePaint;
@@ -418,14 +421,6 @@ public class Gauge extends View {
         return degrees - 90;
     }
 
-    public void setValue(float value) {
-        needleValue = this.value = value;
-    }
-
-    public void moveToValue(float value) {
-        this.value = value;
-    }
-
     private boolean needsToMove() {
         return Math.abs(needleValue - value) > 0;
     }
@@ -436,24 +431,62 @@ public class Gauge extends View {
         canvas.drawText(text, x, yPos, paint);
     }
 
+    /**
+     * Set gauge to value.
+     * @param value Value
+     */
+    public void setValue(float value) {
+        needleValue = this.value = value;
+    }
+
+    /**
+     * Animate gauge to value.
+     * @param value Value
+     */
+    public void moveToValue(float value) {
+        this.value = value;
+    }
+
+    /**
+     * Set string to display on upper gauge face.
+     * @param text Text
+     */
     public void setUpperText(String text) {
         upperText = text;
         invalidate();
     }
 
+    /**
+     * Set string to display on lower gauge face.
+     * @param text Text
+     */
     public void setLowerText(String text) {
         lowerText = text;
         invalidate();
     }
 
+    /**
+     * Request a text size.
+     * @param size Size (pixels)
+     * @see Paint#setTextSize(float);
+     */
     public void setRequestedTextSize(float size) {
         requestedTextSize = size;
     }
 
+    /**
+     * Set the delta time between movement steps during needle animation (default: 5 ms).
+     * @param interval Time (ms)
+     */
     public void setDeltaTimeInterval(int interval) {
         deltaTimeInterval = interval;
     }
 
+    /**
+     * Set the factor that determines the step size during needle animation (default: 3f).
+     * The actual step size is calulated as follows: step_size = step_factor * scale_value_per_degree.
+     * @param factor Step factor
+     */
     public void setNeedleStepFactor(float factor) {
         needleStepFactor = factor;
     }
