@@ -234,7 +234,7 @@ public class Gauge extends View {
 
     private void drawScale(Canvas canvas) {
 
-        canvas.save(Canvas.MATRIX_SAVE_FLAG);
+        canvas.save();
         for (int i = 0; i < totalNicks; ++i) {
             float y1 = scaleRect.top;
             float y2 = y1 + (0.020f * canvasHeight);
