@@ -97,3 +97,7 @@ dependencies {
     compile 'com.github.Pygmalion69:Gauge:1.2.3'
 }
 ```
+
+### App implementing this view
+
+[ErsaAndroid](https://github.com/Pygmalion69/ErsaAndroid)
