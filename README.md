@@ -25,7 +25,7 @@ See my [blog post](http://pygmalion.nitri.de/android-gauge-view-1039.html) for a
 
 ### XML attributes
 #### totalNicks
-Total number of nicks on a full 360 degree scale.
+Total number of nicks on a full 360 degree scale. This should be a multiple of majorNickInterval.
 #### valuePerNick
 Float value (interval) per nick.
 #### majorNickInterval
@@ -73,6 +73,16 @@ Set the delta time between movement steps during needle animation (default: 5 ms
 #### void setNeedleStepFactor(float value)
 Set the factor that determines the step size during needle animation (default: 3f).
 The actual step size is calulated as follows: step_size = step_factor * scale_value_per_degree.
+#### void setMinValue(float value)
+Set the minimum scale value.
+#### void setMaxValue(float value)
+Set the maximum scale value.
+####  void setTotalNicks(int nicks)
+Set the total amount of nicks on a full 360 degree scale. Should be a multiple of majorNickInterval.
+#### void setValuePerNick(float value)
+Set the value (interval) per nick.
+#### void setMajorNickInterval(int interval)
+Set the interval (number of nicks) between enlarged nicks.
 
 ### Javadoc
 [http://pygmalion.nitri.org/javadoc/gauge/](http://pygmalion.nitri.org/javadoc/gauge/)

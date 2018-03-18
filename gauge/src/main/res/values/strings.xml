@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Gauge</string>
+    <string name="invalid_number_of_nicks">Total nicks (%1$d) should be a multiple of major nick interval (%2$d). Scale may be distorted.</string>
+    <string name="invalid_min_max_ratio">Sum of min (%1$f) and max (%2$f) should be divisible by 2. Scale may be distorted.</string>
+    <string name="invalid_min_max">Sum of min (%1$f) and max (%2$f) should be a multiple of value per nick (%3$f). Scale may be distorted.</string>
+    <string name="scale_ok">Scale should be okay.</string>
 </resources>

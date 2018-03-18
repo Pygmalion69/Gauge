@@ -15,12 +15,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Gauge gauge1 = (Gauge) findViewById(R.id.gauge1);
-        final Gauge gauge2 = (Gauge) findViewById(R.id.gauge2);
-        final Gauge gauge3 = (Gauge) findViewById(R.id.gauge3);
-        final Gauge gauge4 = (Gauge) findViewById(R.id.gauge4);
+        final Gauge gauge1 = findViewById(R.id.gauge1);
+        final Gauge gauge2 = findViewById(R.id.gauge2);
+        final Gauge gauge3 = findViewById(R.id.gauge3);
+        final Gauge gauge4 = findViewById(R.id.gauge4);
 
         gauge1.moveToValue(800);
+
+        /*
+        gauge1.setMaxValue(800);
+        gauge1.setTotalNicks(100);
+        gauge1.setValuePerNick(10);
+        gauge1.setMajorNickInterval(10);
+        gauge1.setMaxValue(800);
+        */
 
         HandlerThread thread = new HandlerThread("GaugeDemoThread");
         thread.start();

@@ -16,6 +16,7 @@ import android.os.Parcelable;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 
 /**
@@ -23,7 +24,7 @@ import android.view.View;
  * @author Pygmalion69 (Serge Helfrich)
  * @version 1.x
  * @since 2017-01-07
- * @see @see <a href="https://github.com/Pygmalion69/Gauge">https://github.com/Pygmalion69/Gauge/a>
+ * @see @see <a href="https://github.com/Pygmalion69/Gauge">https://github.com/Pygmalion69/Gauge/</a>
  */
 public class Gauge extends View {
 
@@ -85,19 +86,22 @@ public class Gauge extends View {
 
     public Gauge(Context context) {
         super(context);
-        init();
+        initValues();
+        initPaint();
     }
 
     public Gauge(Context context, AttributeSet attrs) {
         super(context, attrs);
         applyAttrs(context, attrs);
-        init();
+        initValues();
+        initPaint();
     }
 
     public Gauge(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         applyAttrs(context, attrs);
-        init();
+        initValues();
+        initPaint();
     }
 
     private void applyAttrs(Context context, AttributeSet attrs) {
@@ -119,15 +123,20 @@ public class Gauge extends View {
         upperText = a.getString(R.styleable.Gauge_upperText) == null ? upperText : fromHtml(a.getString(R.styleable.Gauge_upperText)).toString();
         lowerText = a.getString(R.styleable.Gauge_lowerText) == null ? lowerText : fromHtml(a.getString(R.styleable.Gauge_lowerText)).toString();
         a.recycle();
+
+        validate();
     }
 
-    private void init() {
+    private void initValues() {
+        needleStep = needleStepFactor * valuePerDegree();
+        centerValue = (minValue + maxValue) / 2;
+        needleValue = value = initialValue;
+    }
+
+    private void initPaint() {
 
         setSaveEnabled(true);
 
-        needleStep = needleStepFactor * valuePerDegree();
-
-        centerValue = (minValue + maxValue) / 2;
 
         // Rim and shadow are based on the Vintage Thermometer:
         // http://mindtherobot.com/blog/272/android-custom-ui-making-a-vintage-thermometer/
@@ -175,8 +184,6 @@ public class Gauge extends View {
         needleScrewPaint = new Paint();
         needleScrewPaint.setColor(Color.BLACK);
         needleScrewPaint.setAntiAlias(true);
-
-        needleValue = value = initialValue;
     }
 
     @Override
@@ -184,20 +191,13 @@ public class Gauge extends View {
         super.onDraw(canvas);
 
         drawRim(canvas);
-
         drawFace(canvas);
-
         drawScale(canvas);
         drawLabels(canvas);
-
         drawTexts(canvas);
-
         canvas.rotate(scaleToCanvasDegrees(valueToDegrees(needleValue)), canvasCenterX, canvasCenterY);
-
         canvas.drawPath(needlePath, needlePaint);
-
         canvas.drawCircle(canvasCenterX, canvasCenterY, canvasWidth / 61f, needleScrewPaint);
-
         invalidate();
 
         if (needsToMove()) {
@@ -221,7 +221,6 @@ public class Gauge extends View {
             }
             lastMoveTime = System.currentTimeMillis();
         }
-
     }
 
     private void drawRim(Canvas canvas) {
@@ -492,11 +491,85 @@ public class Gauge extends View {
     }
 
 
+    /**
+     * Set the minimum scale value.
+     * @param value minimum value
+     */
+    public void setMinValue(float value) {
+        minValue = value;
+        initValues();
+        validate();
+        invalidate();
+    }
+
+    /**
+     * Set the maximum scale value.
+     * @param value maximum value
+     */
+    public void setMaxValue(float value) {
+        maxValue = value;
+        initValues();
+        validate();
+        invalidate();
+    }
+
+    /**
+     * Set the total amount of nicks on a full 360 degree scale. Should be a multiple of majorNickInterval.
+     * @param nicks number of nicks
+     */
+    public void setTotalNicks(int nicks) {
+        totalNicks = nicks;
+        degreesPerNick = 360.0f / totalNicks;
+        initValues();
+        validate();
+        invalidate();
+    }
+
+    /**
+     * Set the value (interval) per nick.
+     * @param value value per nick
+     */
+    public void setValuePerNick(float value) {
+        valuePerNick = value;
+        initValues();
+        validate();
+        invalidate();
+    }
+
+    /**
+     * Set the interval (number of nicks) between enlarged nicks.
+     * @param interval major nick interval
+     */
+    public void setMajorNickInterval(int interval) {
+        majorNickInterval = interval;
+        validate();
+        invalidate();
+    }
+
+    private void validate() {
+        boolean valid = true;
+        if (totalNicks % majorNickInterval != 0) {
+            valid = false;
+            Log.w(TAG, getResources().getString(R.string.invalid_number_of_nicks, totalNicks, majorNickInterval));
+        }
+        float sum = minValue + maxValue;
+        int intSum = Math.round(sum);
+        if ((maxValue >=1 && (sum != intSum || (intSum & 1) != 0)) || minValue >= maxValue) {
+            valid = false;
+            Log.w(TAG, getResources().getString(R.string.invalid_min_max_ratio, minValue, maxValue));
+        }
+        if (Math.round(sum % valuePerNick) != 0) {
+            valid = false;
+            Log.w(TAG, getResources().getString(R.string.invalid_min_max, minValue, maxValue, valuePerNick));
+        }
+        if (valid) Log.i(TAG, getResources().getString(R.string.scale_ok));
+    }
+
     @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String html){
+    private static Spanned fromHtml(String html){
         Spanned result;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+            result = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
         } else {
             result = Html.fromHtml(html);
         }
