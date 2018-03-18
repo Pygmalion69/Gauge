@@ -75,7 +75,7 @@ Set the factor that determines the step size during needle animation (default: 3
 The actual step size is calulated as follows: step_size = step_factor * scale_value_per_degree.
 
 ### Javadoc
-[http://pygmalion.nitri.de/javadoc/gauge/](http://pygmalion.nitri.de/javadoc/gauge/)
+[http://pygmalion.nitri.org/javadoc/gauge/](http://pygmalion.nitri.org/javadoc/gauge/)
 
 
 ### Gradle
@@ -97,3 +97,7 @@ dependencies {
     compile 'com.github.Pygmalion69:Gauge:1.2.3'
 }
 ```
+
+### App implementing this view
+
+[ErsaAndroid](https://github.com/Pygmalion69/ErsaAndroid)
