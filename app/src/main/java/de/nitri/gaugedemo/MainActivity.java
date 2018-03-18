@@ -24,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
 
         /*
         gauge1.setMaxValue(800);
+        gauge1.setMinValue(0);
         gauge1.setTotalNicks(100);
         gauge1.setValuePerNick(10);
         gauge1.setMajorNickInterval(10);
-        gauge1.setMaxValue(800);
         */
 
         HandlerThread thread = new HandlerThread("GaugeDemoThread");
