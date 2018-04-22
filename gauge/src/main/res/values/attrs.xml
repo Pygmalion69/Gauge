@@ -17,6 +17,8 @@
         <attr name="textSize" format="float" />
         <attr name="upperText" format="string" />
         <attr name="lowerText" format="string" />
+        <attr name="upperTextSize" format="float" />
+        <attr name="lowerTextSize" format="float" />
 
     </declare-styleable>
 

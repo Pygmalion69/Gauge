@@ -58,6 +58,10 @@ String to display on upper gauge face (e.g. a quantity).
 String to display on lower gauge face (e.g. a unit).
 #### textSize
 Float text size for upper and lower text.
+#### upperTextSize
+Float text size for upper text.
+#### lowerTextSize
+Float text size for lower text.
 
 ### Public methods
 #### void setValue(float value)
@@ -68,6 +72,12 @@ Animate gauge to value.
 Set string to display on upper gauge face.
 #### void setLowerText(String text)
 Set string to display on lower gauge face.
+#### void setTextSize(float pixels)
+Set a text size for the upper and lower text.
+#### void setUpperTextSize(float pixels)
+Set or override the text size for the upper text.
+#### void setLowerTextSize(float pixels)
+Set or override the text size for the lower text.
 #### void setDeltaTimeInterval(int value)
 Set the delta time between movement steps during needle animation (default: 5 ms).
 #### void setNeedleStepFactor(float value)
@@ -104,7 +114,7 @@ Add the dependency:
 
 ```
 dependencies {
-    compile 'com.github.Pygmalion69:Gauge:1.3.1'
+    compile 'com.github.Pygmalion69:Gauge:1.4'
 }
 ```
 

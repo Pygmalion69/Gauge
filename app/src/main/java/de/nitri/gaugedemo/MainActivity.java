@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         gauge1.setTotalNicks(100);
         gauge1.setValuePerNick(10);
         gauge1.setMajorNickInterval(10);
+        gauge1.setUpperTextSize(100);
+        gauge1.setLowerTextSize(48);
         */
 
         HandlerThread thread = new HandlerThread("GaugeDemoThread");

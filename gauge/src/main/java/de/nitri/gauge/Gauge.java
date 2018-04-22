@@ -21,10 +21,11 @@ import android.view.View;
 
 /**
  * A Gauge View on Android
+ *
  * @author Pygmalion69 (Serge Helfrich)
  * @version 1.x
- * @since 2017-01-07
  * @see @see <a href="https://github.com/Pygmalion69/Gauge">https://github.com/Pygmalion69/Gauge/</a>
+ * @since 2017-01-07
  */
 public class Gauge extends View {
 
@@ -78,9 +79,12 @@ public class Gauge extends View {
     private int faceColor;
     private int scaleColor;
     private int needleColor;
-    private Paint textPaint;
+    private Paint upperTextPaint;
+    private Paint lowerTextPaint;
 
     private float requestedTextSize = 0;
+    private float requestedUpperTextSize = 0;
+    private float requestedLowerTextSize = 0;
     private String upperText = "";
     private String lowerText = "";
 
@@ -122,6 +126,8 @@ public class Gauge extends View {
         requestedTextSize = a.getFloat(R.styleable.Gauge_textSize, requestedTextSize);
         upperText = a.getString(R.styleable.Gauge_upperText) == null ? upperText : fromHtml(a.getString(R.styleable.Gauge_upperText)).toString();
         lowerText = a.getString(R.styleable.Gauge_lowerText) == null ? lowerText : fromHtml(a.getString(R.styleable.Gauge_lowerText)).toString();
+        requestedUpperTextSize = a.getFloat(R.styleable.Gauge_upperTextSize, 0);
+        requestedLowerTextSize = a.getFloat(R.styleable.Gauge_lowerTextSize, 0);
         a.recycle();
 
         validate();
@@ -169,10 +175,15 @@ public class Gauge extends View {
         labelPaint.setTypeface(Typeface.SANS_SERIF);
         labelPaint.setTextAlign(Paint.Align.CENTER);
 
-        textPaint = new Paint();
-        textPaint.setColor(scaleColor);
-        textPaint.setTypeface(Typeface.SANS_SERIF);
-        textPaint.setTextAlign(Paint.Align.CENTER);
+        upperTextPaint = new Paint();
+        upperTextPaint.setColor(scaleColor);
+        upperTextPaint.setTypeface(Typeface.SANS_SERIF);
+        upperTextPaint.setTextAlign(Paint.Align.CENTER);
+
+        lowerTextPaint = new Paint();
+        lowerTextPaint.setColor(scaleColor);
+        lowerTextPaint.setTypeface(Typeface.SANS_SERIF);
+        lowerTextPaint.setTextAlign(Paint.Align.CENTER);
 
         needlePaint = new Paint();
         needlePaint.setColor(needleColor);
@@ -283,8 +294,8 @@ public class Gauge extends View {
     }
 
     private void drawTexts(Canvas canvas) {
-        drawTextCentered(upperText, canvasCenterX, canvasCenterY - (canvasHeight / 6.5f), textPaint, canvas);
-        drawTextCentered(lowerText, canvasCenterX, canvasCenterY + (canvasHeight / 6.5f), textPaint, canvas);
+        drawTextCentered(upperText, canvasCenterX, canvasCenterY - (canvasHeight / 6.5f), upperTextPaint, canvas);
+        drawTextCentered(lowerText, canvasCenterX, canvasCenterY + (canvasHeight / 6.5f), lowerTextPaint, canvas);
     }
 
     @Override
@@ -337,11 +348,16 @@ public class Gauge extends View {
             labelPaint.setTextSize(w / 16f);
         }
 
+        float textSize;
+
         if (requestedTextSize > 0) {
-            textPaint.setTextSize(requestedTextSize);
+            textSize = requestedTextSize;
         } else {
-            textPaint.setTextSize(w / 14f);
+            textSize = w / 14f;
         }
+
+        upperTextPaint.setTextSize(requestedUpperTextSize > 0 ? requestedUpperTextSize : textSize);
+        lowerTextPaint.setTextSize(requestedLowerTextSize > 0 ? requestedLowerTextSize : textSize);
 
         // Log.d(TAG, "width = " + w);
 
@@ -432,6 +448,7 @@ public class Gauge extends View {
 
     /**
      * Set gauge to value.
+     *
      * @param value Value
      */
     public void setValue(float value) {
@@ -440,6 +457,7 @@ public class Gauge extends View {
 
     /**
      * Animate gauge to value.
+     *
      * @param value Value
      */
     public void moveToValue(float value) {
@@ -448,6 +466,7 @@ public class Gauge extends View {
 
     /**
      * Set string to display on upper gauge face.
+     *
      * @param text Text
      */
     public void setUpperText(String text) {
@@ -457,6 +476,7 @@ public class Gauge extends View {
 
     /**
      * Set string to display on lower gauge face.
+     *
      * @param text Text
      */
     public void setLowerText(String text) {
@@ -466,15 +486,48 @@ public class Gauge extends View {
 
     /**
      * Request a text size.
+     *
      * @param size Size (pixels)
      * @see Paint#setTextSize(float);
      */
+    @Deprecated
     public void setRequestedTextSize(float size) {
+        setTextSize(size);
+    }
+
+    /**
+     * Set a text size for the upper and lower text.
+     *
+     * @param size Size (pixels)
+     * @see Paint#setTextSize(float);
+     */
+    public void setTextSize(float size) {
         requestedTextSize = size;
     }
 
     /**
+     * Set or override the text size for the upper text.
+     *
+     * @param size (pixels)
+     * @see Paint#setTextSize(float);
+     */
+    public void setUpperTextSize(float size) {
+        requestedUpperTextSize = size;
+    }
+
+    /**
+     * Set or override the text size for the lower text
+     *
+     * @param size (pixels)
+     * @see Paint#setTextSize(float);
+     */
+    public void setLowerTextSize(float size) {
+        requestedLowerTextSize = size;
+    }
+
+    /**
      * Set the delta time between movement steps during needle animation (default: 5 ms).
+     *
      * @param interval Time (ms)
      */
     public void setDeltaTimeInterval(int interval) {
@@ -484,6 +537,7 @@ public class Gauge extends View {
     /**
      * Set the factor that determines the step size during needle animation (default: 3f).
      * The actual step size is calulated as follows: step_size = step_factor * scale_value_per_degree.
+     *
      * @param factor Step factor
      */
     public void setNeedleStepFactor(float factor) {
@@ -493,6 +547,7 @@ public class Gauge extends View {
 
     /**
      * Set the minimum scale value.
+     *
      * @param value minimum value
      */
     public void setMinValue(float value) {
@@ -504,6 +559,7 @@ public class Gauge extends View {
 
     /**
      * Set the maximum scale value.
+     *
      * @param value maximum value
      */
     public void setMaxValue(float value) {
@@ -515,6 +571,7 @@ public class Gauge extends View {
 
     /**
      * Set the total amount of nicks on a full 360 degree scale. Should be a multiple of majorNickInterval.
+     *
      * @param nicks number of nicks
      */
     public void setTotalNicks(int nicks) {
@@ -527,6 +584,7 @@ public class Gauge extends View {
 
     /**
      * Set the value (interval) per nick.
+     *
      * @param value value per nick
      */
     public void setValuePerNick(float value) {
@@ -538,6 +596,7 @@ public class Gauge extends View {
 
     /**
      * Set the interval (number of nicks) between enlarged nicks.
+     *
      * @param interval major nick interval
      */
     public void setMajorNickInterval(int interval) {
@@ -554,7 +613,7 @@ public class Gauge extends View {
         }
         float sum = minValue + maxValue;
         int intSum = Math.round(sum);
-        if ((maxValue >=1 && (sum != intSum || (intSum & 1) != 0)) || minValue >= maxValue) {
+        if ((maxValue >= 1 && (sum != intSum || (intSum & 1) != 0)) || minValue >= maxValue) {
             valid = false;
             Log.w(TAG, getResources().getString(R.string.invalid_min_max_ratio, minValue, maxValue));
         }
@@ -566,7 +625,7 @@ public class Gauge extends View {
     }
 
     @SuppressWarnings("deprecation")
-    private static Spanned fromHtml(String html){
+    private static Spanned fromHtml(String html) {
         Spanned result;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             result = Html.fromHtml(html, Html.FROM_HTML_MODE_LEGACY);
