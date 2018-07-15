@@ -22,7 +22,7 @@
         gauge:labelTextSize="42"
         gauge:maxValue="1000"
         gauge:minValue="0"
-        gauge:totalNicks="120"
+        gauge:totalNicks="130"
         gauge:valuePerNick="10"
         gauge:upperText="Qty"
         gauge:lowerText="@string/per_minute" />
