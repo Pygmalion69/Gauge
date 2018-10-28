@@ -20,8 +20,6 @@ public class MainActivity extends AppCompatActivity {
         final Gauge gauge3 = findViewById(R.id.gauge3);
         final Gauge gauge4 = findViewById(R.id.gauge4);
 
-        gauge1.moveToValue(800);
-
         /*
         gauge1.setMaxValue(800);
         gauge1.setMinValue(0);
@@ -31,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         gauge1.setUpperTextSize(100);
         gauge1.setLowerTextSize(48);
         */
+
+        gauge1.moveToValue(800);
 
         HandlerThread thread = new HandlerThread("GaugeDemoThread");
         thread.start();

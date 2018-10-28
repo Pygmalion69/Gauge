@@ -63,6 +63,10 @@ Float text size for upper text.
 #### lowerTextSize
 Float text size for lower text.
 
+*Text size is in pixels at a screen width (max. canvas width/height) of 1080 and is scaled
+accordingly at different resolutions. E.g. a value of 48 is unchanged at 1080 x 1920
+and scaled down to 27 at 600 x 1024.*
+
 ### Public methods
 #### void setValue(float value)
 Set gauge to value.
@@ -72,11 +76,11 @@ Animate gauge to value.
 Set string to display on upper gauge face.
 #### void setLowerText(String text)
 Set string to display on lower gauge face.
-#### void setTextSize(float pixels)
+#### void setTextSize(float relative pixels)
 Set a text size for the upper and lower text.
-#### void setUpperTextSize(float pixels)
+#### void setUpperTextSize(float relative pixels)
 Set or override the text size for the upper text.
-#### void setLowerTextSize(float pixels)
+#### void setLowerTextSize(float relative pixels)
 Set or override the text size for the lower text.
 #### void setDeltaTimeInterval(int value)
 Set the delta time between movement steps during needle animation (default: 5 ms).
@@ -93,6 +97,10 @@ Set the total amount of nicks on a full 360 degree scale. Should be a multiple o
 Set the value (interval) per nick.
 #### void setMajorNickInterval(int interval)
 Set the interval (number of nicks) between enlarged nicks.
+
+*Text size is in pixels at a screen width (max. canvas width/height) of 1080 and is scaled
+accordingly at different resolutions. E.g. a value of 48 is unchanged at 1080 x 1920
+and scaled down to 27 at 600 x 1024.*
 
 ### Javadoc
 [http://pygmalion.nitri.org/javadoc/gauge/](http://pygmalion.nitri.org/javadoc/gauge/)

@@ -6,4 +6,8 @@
     <color name="anthracite">#2B292E</color>
     <color name="orangeRed">#FF4500</color>
     <color name="green">#008000</color>
+
+    <color name="debug_red">#F00</color>
+    <color name="debug_green">#0F0</color>
+    <color name="debug_blue">#00F</color>
 </resources>

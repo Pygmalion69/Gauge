@@ -88,6 +88,9 @@ public class Gauge extends View {
     private String upperText = "";
     private String lowerText = "";
 
+    private static final int REF_MAX_CANVAS_SIZE = 1080; // reference size, scale text accordingly
+    private float textScaleFactor;
+
     public Gauge(Context context) {
         super(context);
         initValues();
@@ -137,12 +140,14 @@ public class Gauge extends View {
         needleStep = needleStepFactor * valuePerDegree();
         centerValue = (minValue + maxValue) / 2;
         needleValue = value = initialValue;
+
+        int maxCanvasSize = getResources().getDisplayMetrics().widthPixels;
+        textScaleFactor = (float) maxCanvasSize / (float) REF_MAX_CANVAS_SIZE;
     }
 
     private void initPaint() {
 
         setSaveEnabled(true);
-
 
         // Rim and shadow are based on the Vintage Thermometer:
         // http://mindtherobot.com/blog/272/android-custom-ui-making-a-vintage-thermometer/
@@ -342,24 +347,37 @@ public class Gauge extends View {
 
         labelRadius = (canvasCenterX - scaleRect.left) * 0.70f;
 
-        if (requestedLabelTextSize > 0) {
-            labelPaint.setTextSize(requestedLabelTextSize);
-        } else {
-            labelPaint.setTextSize(w / 16f);
-        }
+        /*
+        Log.d(TAG, "width = " + w);
+        Log.d(TAG, "height = " + h);
+        Log.d(TAG, "width pixels = " + getResources().getDisplayMetrics().widthPixels);
+        Log.d(TAG, "height pixels = " + getResources().getDisplayMetrics().heightPixels);
+        Log.d(TAG, "density = " + getResources().getDisplayMetrics().density);
+        Log.d(TAG, "density dpi = " + getResources().getDisplayMetrics().densityDpi);
+        Log.d(TAG, "scaled density = " + getResources().getDisplayMetrics().scaledDensity);
+        */
 
         float textSize;
 
+        if (requestedLabelTextSize > 0) {
+            textSize = requestedLabelTextSize * textScaleFactor;
+            labelPaint.setTextSize(textSize);
+        } else {
+            textSize = canvasWidth / 16f;
+            labelPaint.setTextSize(textSize);
+
+        }
+
+        Log.d(TAG, "Label text size = " + textSize);
+
         if (requestedTextSize > 0) {
-            textSize = requestedTextSize;
+            textSize = requestedTextSize * textScaleFactor;
         } else {
             textSize = w / 14f;
         }
 
-        upperTextPaint.setTextSize(requestedUpperTextSize > 0 ? requestedUpperTextSize : textSize);
-        lowerTextPaint.setTextSize(requestedLowerTextSize > 0 ? requestedLowerTextSize : textSize);
-
-        // Log.d(TAG, "width = " + w);
+        upperTextPaint.setTextSize(requestedUpperTextSize > 0 ? requestedUpperTextSize * textScaleFactor: textSize);
+        lowerTextPaint.setTextSize(requestedLowerTextSize > 0 ? requestedLowerTextSize * textScaleFactor: textSize);
 
         super.onSizeChanged(w, h, oldw, oldh);
     }
@@ -498,7 +516,11 @@ public class Gauge extends View {
     /**
      * Set a text size for the upper and lower text.
      *
-     * @param size Size (pixels)
+     * Size is in pixels at a screen width (max. canvas width/height) of 1080 and is scaled
+     * accordingly at different resolutions. E.g. a value of 48 is unchanged at 1080 x 1920
+     * and scaled down to 27 at 600 x 1024.
+     *
+     * @param size Size (relative pixels)
      * @see Paint#setTextSize(float);
      */
     public void setTextSize(float size) {
@@ -508,7 +530,11 @@ public class Gauge extends View {
     /**
      * Set or override the text size for the upper text.
      *
-     * @param size (pixels)
+     * Size is in pixels at a screen width (max. canvas width/height) of 1080 and is scaled
+     * accordingly at different resolutions. E.g. a value of 48 is unchanged at 1080 x 1920
+     * and scaled down to 27 at 600 x 1024.
+     *
+     * @param size (relative pixels)
      * @see Paint#setTextSize(float);
      */
     public void setUpperTextSize(float size) {
@@ -518,7 +544,11 @@ public class Gauge extends View {
     /**
      * Set or override the text size for the lower text
      *
-     * @param size (pixels)
+     * Size is in pixels at a screen width (max. canvas width/height) of 1080 and is scaled
+     * accordingly at different resolutions. E.g. a value of 48 is unchanged at 1080 x 1920
+     * and scaled down to 27 at 600 x 1024.
+     *
+     * @param size (relative pixels)
      * @see Paint#setTextSize(float);
      */
     public void setLowerTextSize(float size) {
