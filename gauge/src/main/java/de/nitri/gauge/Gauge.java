@@ -88,8 +88,9 @@ public class Gauge extends View {
     private String upperText = "";
     private String lowerText = "";
 
-    private static final int REF_MAX_CANVAS_SIZE = 1080; // reference size, scale text accordingly
     private float textScaleFactor;
+
+    private static final int REF_MAX_PORTRAIT_CANVAS_SIZE = 1080; // reference size, scale text accordingly
 
     public Gauge(Context context) {
         super(context);
@@ -141,8 +142,14 @@ public class Gauge extends View {
         centerValue = (minValue + maxValue) / 2;
         needleValue = value = initialValue;
 
-        int maxCanvasSize = getResources().getDisplayMetrics().widthPixels;
-        textScaleFactor = (float) maxCanvasSize / (float) REF_MAX_CANVAS_SIZE;
+        int widthPixels = getResources().getDisplayMetrics().widthPixels;
+        textScaleFactor = (float) widthPixels / (float) REF_MAX_PORTRAIT_CANVAS_SIZE;
+
+        if (getResources().getBoolean(R.bool.landscape)) {
+            int heightPixels = getResources().getDisplayMetrics().heightPixels;
+            float portraitAspectRatio = (float) heightPixels / (float) widthPixels;
+            textScaleFactor = textScaleFactor * portraitAspectRatio;
+        }
     }
 
     private void initPaint() {
@@ -361,21 +368,18 @@ public class Gauge extends View {
 
         if (requestedLabelTextSize > 0) {
             textSize = requestedLabelTextSize * textScaleFactor;
-            labelPaint.setTextSize(textSize);
         } else {
             textSize = canvasWidth / 16f;
-            labelPaint.setTextSize(textSize);
-
         }
-
         Log.d(TAG, "Label text size = " + textSize);
+        labelPaint.setTextSize(textSize);
 
         if (requestedTextSize > 0) {
             textSize = requestedTextSize * textScaleFactor;
         } else {
-            textSize = w / 14f;
+            textSize = canvasWidth / 14f;
         }
-
+        Log.d(TAG, "Default upper/lower text size = " + textSize);
         upperTextPaint.setTextSize(requestedUpperTextSize > 0 ? requestedUpperTextSize * textScaleFactor: textSize);
         lowerTextPaint.setTextSize(requestedLowerTextSize > 0 ? requestedLowerTextSize * textScaleFactor: textSize);
 
