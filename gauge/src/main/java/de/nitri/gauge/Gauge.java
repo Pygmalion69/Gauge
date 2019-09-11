@@ -221,7 +221,6 @@ public class Gauge extends View {
         canvas.rotate(scaleToCanvasDegrees(valueToDegrees(needleValue)), canvasCenterX, canvasCenterY);
         canvas.drawPath(needlePath, needlePaint);
         canvas.drawCircle(canvasCenterX, canvasCenterY, canvasWidth / 61f, needleScrewPaint);
-        invalidate();
 
         if (needsToMove()) {
             moveNeedle();
@@ -243,6 +242,7 @@ public class Gauge extends View {
                 }
             }
             lastMoveTime = System.currentTimeMillis();
+            postInvalidateDelayed(deltaTimeInterval);
         }
     }
 
@@ -475,6 +475,7 @@ public class Gauge extends View {
      */
     public void setValue(float value) {
         needleValue = this.value = value;
+        invalidate();
     }
 
     /**
@@ -484,6 +485,7 @@ public class Gauge extends View {
      */
     public void moveToValue(float value) {
         this.value = value;
+        invalidate();
     }
 
     /**
