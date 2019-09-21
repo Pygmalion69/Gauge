@@ -475,7 +475,7 @@ public class Gauge extends View {
      */
     public void setValue(float value) {
         needleValue = this.value = value;
-        invalidate();
+        postInvalidate();
     }
 
     /**
@@ -485,7 +485,7 @@ public class Gauge extends View {
      */
     public void moveToValue(float value) {
         this.value = value;
-        invalidate();
+        postInvalidate();
     }
 
     /**
