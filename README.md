@@ -122,7 +122,7 @@ Add the dependency:
 
 ```
 dependencies {
-    implementation 'com.github.Pygmalion69:Gauge:1.5.1'
+    implementation 'com.github.Pygmalion69:Gauge:1.5.2'
 }
 ```
 
