@@ -29,6 +29,31 @@ import android.view.View;
  */
 public class Gauge extends View {
 
+    //Create a default nick logic behaviour
+    private IGaugeNick gaugeNick = new IGaugeNick() {
+        @Override
+        public boolean shouldDrawMajorNick(int nick, float value) {
+            return (nick % majorNickInterval == 0);
+        }
+
+        @Override
+        public boolean shouldDrawHalfNick(int nick, float value) {
+            if (minorTicInterval > 0) {
+                return nick % minorTicInterval == 0;
+            }
+            return false;
+        }
+
+        @Override
+        public String getLabelString(int nick, float value) {
+            if (shouldDrawMajorNick(nick, value)) {
+                return String.valueOf(Math.round(value));
+            } else {
+                return null;
+            }
+        }
+    };
+
     private Paint needlePaint;
     private Path needlePath;
     private Paint needleScrewPaint;
@@ -49,8 +74,10 @@ public class Gauge extends View {
     private Paint scalePaint;
     private RectF scaleRect;
 
-    private int totalNicks = 120; // on a full circle
-    private float degreesPerNick = totalNicks / 360;
+    private int totalNicks = 120;
+    private float startAngle = 10;
+    private float endAngle = 350;
+    private float degreesPerNick = (endAngle - startAngle) / totalNicks;
     private float valuePerNick = 10;
     private float minValue = 0;
     private float maxValue = 1000;
@@ -64,10 +91,10 @@ public class Gauge extends View {
 
     private float needleStep;
 
-    private float centerValue;
     private float labelRadius;
 
     private int majorNickInterval = 10;
+    private int minorTicInterval = -1;
 
     private int deltaTimeInterval = 5;
     private float needleStepFactor = 3f;
@@ -77,6 +104,7 @@ public class Gauge extends View {
     private long lastMoveTime;
     private boolean needleShadow = true;
     private int faceColor;
+    private int rimColor;
     private int scaleColor;
     private int needleColor;
     private Paint upperTextPaint;
@@ -108,22 +136,22 @@ public class Gauge extends View {
     public Gauge(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         applyAttrs(context, attrs);
-        initValues();
         initPaint();
     }
 
     private void applyAttrs(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.Gauge, 0, 0);
         totalNicks = a.getInt(R.styleable.Gauge_totalNicks, totalNicks);
-        degreesPerNick = 360.0f / totalNicks;
-        valuePerNick = a.getFloat(R.styleable.Gauge_valuePerNick, valuePerNick);
-        majorNickInterval = a.getInt(R.styleable.Gauge_majorNickInterval, 10);
+        startAngle = a.getFloat(R.styleable.Gauge_startAngle, startAngle);
+        endAngle = a.getFloat(R.styleable.Gauge_endAngle, endAngle);
+        majorNickInterval = a.getInt(R.styleable.Gauge_majorNickInterval, majorNickInterval);
         minValue = a.getFloat(R.styleable.Gauge_minValue, minValue);
         maxValue = a.getFloat(R.styleable.Gauge_maxValue, maxValue);
         intScale = a.getBoolean(R.styleable.Gauge_intScale, intScale);
         initialValue = a.getFloat(R.styleable.Gauge_initialValue, initialValue);
         requestedLabelTextSize = a.getFloat(R.styleable.Gauge_labelTextSize, requestedLabelTextSize);
         faceColor = a.getColor(R.styleable.Gauge_faceColor, Color.argb(0xff, 0xff, 0xff, 0xff));
+        rimColor = a.getColor(R.styleable.Gauge_rimColor, Color.argb(0x4f, 0x33, 0x36, 0x33));
         scaleColor = a.getColor(R.styleable.Gauge_scaleColor, 0x9f004d0f);
         needleColor = a.getColor(R.styleable.Gauge_needleColor, Color.RED);
         needleShadow = a.getBoolean(R.styleable.Gauge_needleShadow, needleShadow);
@@ -134,13 +162,24 @@ public class Gauge extends View {
         requestedLowerTextSize = a.getFloat(R.styleable.Gauge_lowerTextSize, 0);
         a.recycle();
 
+        initValues();
         validate();
     }
 
     private void initValues() {
+        degreesPerNick = (endAngle - startAngle) / totalNicks;
+        valuePerNick = (maxValue - minValue) / totalNicks;
         needleStep = needleStepFactor * valuePerDegree();
-        centerValue = (minValue + maxValue) / 2;
         needleValue = value = initialValue;
+
+        // if major nick interval is a multiple of 2, 3, or 5 then draw minor nicks.
+        if (majorNickInterval % 2 == 0) {
+            minorTicInterval = majorNickInterval/2;
+        } else if (majorNickInterval % 3 == 0) {
+            minorTicInterval = majorNickInterval/3;
+        } else if (majorNickInterval % 5 == 0) {
+            minorTicInterval = majorNickInterval/5;
+        }
 
         int widthPixels = getResources().getDisplayMetrics().widthPixels;
         textScaleFactor = (float) widthPixels / (float) REF_MAX_PORTRAIT_CANVAS_SIZE;
@@ -160,12 +199,13 @@ public class Gauge extends View {
         // http://mindtherobot.com/blog/272/android-custom-ui-making-a-vintage-thermometer/
 
         rimPaint = new Paint();
-        rimPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        rimPaint.setAntiAlias(true);
+        rimPaint.setColor(rimColor);
 
         rimCirclePaint = new Paint();
         rimCirclePaint.setAntiAlias(true);
         rimCirclePaint.setStyle(Paint.Style.STROKE);
-        rimCirclePaint.setColor(Color.argb(0x4f, 0x33, 0x36, 0x33));
+        rimCirclePaint.setColor(rimColor);
         rimCirclePaint.setStrokeWidth(0.005f);
 
         facePaint = new Paint();
@@ -216,7 +256,6 @@ public class Gauge extends View {
         drawRim(canvas);
         drawFace(canvas);
         drawScale(canvas);
-        drawLabels(canvas);
         drawTexts(canvas);
         canvas.rotate(scaleToCanvasDegrees(valueToDegrees(needleValue)), canvasCenterX, canvasCenterY);
         canvas.drawPath(needlePath, needlePaint);
@@ -258,50 +297,37 @@ public class Gauge extends View {
     }
 
     private void drawScale(Canvas canvas) {
+        float y1 = scaleRect.top;
+        float y2 = y1 + (0.020f * canvasHeight);
+        float y3 = y1 + (0.060f * canvasHeight);
+        float y4 = y1 + (0.030f * canvasHeight);
 
-        canvas.save();
-        for (int i = 0; i < totalNicks; ++i) {
-            float y1 = scaleRect.top;
-            float y2 = y1 + (0.020f * canvasHeight);
-            float y3 = y1 + (0.060f * canvasHeight);
-            float y4 = y1 + (0.030f * canvasHeight);
+        for (int i = 0; i <= totalNicks; ++i) {
+            canvas.save();
+            canvas.rotate(i * degreesPerNick + 180 + startAngle, 0.5f * canvasWidth, 0.5f * canvasHeight);
+            canvas.drawLine(0.5f * canvasWidth, y1, 0.5f * canvasWidth, y2, scalePaint);
 
-            float value = nickToValue(i);
-
-            if (value >= minValue && value <= maxValue) {
-                canvas.drawLine(0.5f * canvasWidth, y1, 0.5f * canvasWidth, y2, scalePaint);
-
-                if (i % majorNickInterval == 0) {
-                    canvas.drawLine(0.5f * canvasWidth, y1, 0.5f * canvasWidth, y3, scalePaint);
-                }
-
-                if (i % (majorNickInterval / 2) == 0) {
-                    canvas.drawLine(0.5f * canvasWidth, y1, 0.5f * canvasWidth, y4, scalePaint);
-                }
+            if (gaugeNick.shouldDrawMajorNick(i, i * valuePerNick)) {
+                canvas.drawLine(0.5f * canvasWidth, y1, 0.5f * canvasWidth, y3, scalePaint);
             }
 
-            canvas.rotate(degreesPerNick, 0.5f * canvasWidth, 0.5f * canvasHeight);
+            if (gaugeNick.shouldDrawHalfNick(i, i * valuePerNick)) {
+                canvas.drawLine(0.5f * canvasWidth, y1, 0.5f * canvasWidth, y4, scalePaint);
+            }
+            canvas.restore();
+            drawLabels(canvas, i);
         }
-        canvas.restore();
     }
 
-    private void drawLabels(Canvas canvas) {
-        for (int i = 0; i < totalNicks; i += majorNickInterval) {
-            float value = nickToValue(i);
-            if (value >= minValue && value <= maxValue) {
-                float scaleAngle = i * degreesPerNick;
-                float scaleAngleRads = (float) Math.toRadians(scaleAngle);
-                //Log.d(TAG, "i = " + i + ", angle = " + scaleAngle + ", value = " + value);
-                float deltaX = labelRadius * (float) Math.sin(scaleAngleRads);
-                float deltaY = labelRadius * (float) Math.cos(scaleAngleRads);
-                String valueLabel;
-                if (intScale) {
-                    valueLabel = String.valueOf((int) value);
-                } else {
-                    valueLabel = String.valueOf(value);
-                }
-                drawTextCentered(valueLabel, canvasCenterX + deltaX, canvasCenterY - deltaY, labelPaint, canvas);
-            }
+    private void drawLabels(Canvas canvas, int i) {
+        String valueLabel = gaugeNick.getLabelString(i, i * valuePerNick);
+        if (valueLabel != null) {
+            float scaleAngle = (i * degreesPerNick) + 180 + startAngle;
+            float scaleAngleRads = (float) Math.toRadians(scaleAngle);
+            //Log.d(TAG, "i = " + i + ", angle = " + scaleAngle + ", value = " + value);
+            float deltaX = labelRadius * (float) Math.sin(scaleAngleRads);
+            float deltaY = labelRadius * (float) Math.cos(scaleAngleRads);
+            drawTextCentered(valueLabel, canvasCenterX + deltaX, canvasCenterY - deltaY, labelPaint, canvas);
         }
     }
 
@@ -440,14 +466,9 @@ public class Gauge extends View {
         }
     }
 
-    private float nickToValue(int nick) {
-        float rawValue = ((nick < totalNicks / 2) ? nick : (nick - totalNicks)) * valuePerNick;
-        return rawValue + centerValue;
-    }
-
     private float valueToDegrees(float value) {
-        // these are scale degrees, 0 is on top
-        return ((value - centerValue) / valuePerNick) * degreesPerNick;
+        float angle = (value/valuePerNick * degreesPerNick);
+        return angle <= endAngle ? angle  + 180 + startAngle : endAngle  + 180; // +180 because we need to flip the top/bottom
     }
 
     private float valuePerDegree() {
@@ -606,25 +627,36 @@ public class Gauge extends View {
     }
 
     /**
-     * Set the total amount of nicks on a full 360 degree scale. Should be a multiple of majorNickInterval.
+     * Set the starting angle for the values. The origin is the bottom (6h) position.
      *
-     * @param nicks number of nicks
+     * @param value start angle
      */
-    public void setTotalNicks(int nicks) {
-        totalNicks = nicks;
-        degreesPerNick = 360.0f / totalNicks;
+    public void setStartAngle(float value) {
+        startAngle = value;
         initValues();
         validate();
         invalidate();
     }
 
     /**
-     * Set the value (interval) per nick.
+     * Set the end angle for the values. The origin is the bottom (6h) position.
      *
-     * @param value value per nick
+     * @param value end angle
      */
-    public void setValuePerNick(float value) {
-        valuePerNick = value;
+    public void setEndAngle(float value) {
+        endAngle = value;
+        initValues();
+        validate();
+        invalidate();
+    }
+
+    /**
+     * Set the total amount of nicks on a full 360 degree scale. Should be a multiple of majorNickInterval.
+     *
+     * @param nicks number of nicks
+     */
+    public void setTotalNicks(int nicks) {
+        totalNicks = nicks;
         initValues();
         validate();
         invalidate();
@@ -637,6 +669,19 @@ public class Gauge extends View {
      */
     public void setMajorNickInterval(int interval) {
         majorNickInterval = interval;
+        initValues();
+        validate();
+        invalidate();
+    }
+
+    /**
+     * Set the class to handle when to draw a nick.
+     *
+     * @param nickHandler major nick interval
+     */
+    public void setNickHandler(IGaugeNick nickHandler) {
+        this.gaugeNick = nickHandler;
+        initValues();
         validate();
         invalidate();
     }
