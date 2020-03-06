@@ -28,6 +28,8 @@ import android.view.View;
  * @since 2017-01-07
  */
 public class Gauge extends View {
+
+    //Create a default nick logic behaviour
     private IGaugeNick gaugeNick = new IGaugeNick() {
         @Override
         public boolean shouldDrawMajorNick(int nick, float value) {
@@ -170,6 +172,7 @@ public class Gauge extends View {
         needleStep = needleStepFactor * valuePerDegree();
         needleValue = value = initialValue;
 
+        // if major nick interval is a multiple of 2, 3, or 5 then draw minor nicks.
         if (majorNickInterval % 2 == 0) {
             minorTicInterval = majorNickInterval/2;
         } else if (majorNickInterval % 3 == 0) {
@@ -465,7 +468,7 @@ public class Gauge extends View {
 
     private float valueToDegrees(float value) {
         float angle = (value/valuePerNick * degreesPerNick);
-        return angle <= endAngle ? angle  + 180 + startAngle : endAngle  + 180;
+        return angle <= endAngle ? angle  + 180 + startAngle : endAngle  + 180; // +180 because we need to flip the top/bottom
     }
 
     private float valuePerDegree() {
